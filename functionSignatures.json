@@ -1,0 +1,26 @@
+{
+    "_schemaVersion": "1.0.0",
+    "_v_sqlite3":"3.0.0",
+    "sqlite3":
+    {
+        "inputs":
+        [
+            {"mutuallyExclusiveGroup":
+             [
+                 [
+                     {"name":"filename",      "kind":"required",   "type":["char","row"],
+                      "purpose":"Database file name"}
+                 ],
+                 [
+                     {"name":"optionstruct",  "kind":"required",   "type":["struct","scalar"],
+                      "purpose":"Struct with settings"}
+                 ]
+             ]
+            },
+            {"name":"SQL_statement", "kind":"required",   "type":["char","row"],
+             "purpose":"SQL statement"},
+            {"name":"input_struct",  "kind":"positional", "type":["char","row"],
+             "purpose":"Struct with data."}
+        ]
+    }
+}

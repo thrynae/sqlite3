@@ -1,0 +1,799 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>sqlite3</title><meta name="generator" content="MATLAB 9.11"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-01-22"><meta name="DC.source" content="sqlite3.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; }
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+span.typesection { color:#A0522D }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>sqlite3</h1><!--introduction--><p><tt style="font-size:1%">Formatted documentation for the sqlite3 function.</tt>
+<div style="margin-top:-5em;color:grey">Matlab and Octave interface to the SQLite engine
+</div>
+</p><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Description</a></li><li><a href="#2">Syntax</a></li><li><a href="#3">Output arguments</a></li><li><a href="#4">Input arguments</a></li><li><a href="#5">Name,Value pairs</a></li><li><a href="#6">Example</a></li><li><a href="#7">Compatibility, version info, and licence</a></li><li><a href="#8">Test suite</a></li></ul></div><h2 id="1">Description</h2><p>
+With SQLite you can access an SQL database, without the need of a server. This function is a
+wrapper for a command line interface and a mex interface. The mex files were compiled for most
+operating systems for Matlab. For Octave an internal function will download the source files and
+compile it, since the resulting mex files are less portable than Matlab mex files.
+Since this is a wrapper for different implementations, it is possible that more complex commands
+have inconsistent effects depending on whether the mex implementation was used or the CLI.
+<br>
+<br>The CLI is removed from this version, but will likely be back in a future update. When it is
+back, the CLI may have inconsistent effects across different operating systems. The test suite
+will only test basic functionality for the CLI.
+<br>
+<br>Rich text support was tested with &ldquo;&#120507;&#8707;&#967;&#964;&rdquo; (<code>F0 9D 9A
+BB,E2 88 83,CF 87,CF 84</code> in UTF-8, and <code>D835 DEBB,2203,03C7,03C4</code> in UTF-16).
+This uses a mathematical upper case tau, the 'there exists' symbol, a lower case chi, and a lower
+case tau.
+<br>
+<br>Backwards compatibility for mex files seems to be difficult for projects of this complexity.
+Mex files were compiled for the oldest releases I could get working with a compiler (excluding
+LCC, which seems to suffer from bugs regarding int64). The source code was written to be as
+strict as possible, so it should be possible for any reasonably up to date compiler to handle the
+compilation. The code will probably require only minor modifications to compile.
+<br>
+<br>The basis for the interface is the SQLite3 project itself. The sqlite3.c and sqlite3.h files
+can be downloaded from an archived zip file <a
+href="http://web.archive.org/web/202108id_/https://www.sqlite.org/2021/sqlite-amalgamation-3360000.zip">here</a>.
+The originals for sqlite3_interface.c, structlist.c, and structlist.h can be found on <a
+href="https://github.com/rmartinjak/mex-sqlite3">GitHub</a>. These 3 files were edited to make
+them conform to the stricter standards of older compilers and to remove a message
+(<code>'mexPrintf("binding params %d of %zu\n", i, mxGetM(params));'</code>).
+<br>Additionally a converter file was written to deal with UTF-16 char encoding.
+</p><h2 id="2">Syntax</h2><pre class="language-matlab">sqlite3(filename,SQL_statement)
+sqlite3(optionstruct,SQL_statement)
+sqlite3(___,input_struct)
+response_struct=sqlite3(___)
+[response_struct,cli_output]=sqlite3(___)
+</pre><h2 id="3">Output arguments</h2><p>
+<table border=1>
+<tr><td>
+response_struct
+</td><td>
+This is an Nx1 struct array, with each field name corresponding to the column name in the
+selected table. Other commands might result in different types of output. A very limited number
+of commands and syntax options has been tested.
+<br>For CLI interactions, an attempt will be made to parse the returned output to a struct and to
+convert to an appropriate data type. For fields where this fails, the fields will be char arrays.
+The "PRAGMA table_info('table name')" command is used to parse the data types of output_struct
+for CLI calls.
+</td></tr>
+<tr><td>
+cli_output
+</td><td>
+This is a char vector containing the raw output returned by the system function.
+<br>This variable defaults to an empty char array if not available.
+<br>NB: the current version of this function does not support a CLI interaction, so this variable
+will always be an empty char. It is only here to avoid syntax errors for users updating this
+function.
+</td></tr>
+</table>
+</p><h2 id="4">Input arguments</h2><p>
+<table border=1>
+<tr><td>
+filename
+</td><td>
+The file name of the database file to be edited. Using a full or relative path is optional.
+</td></tr>
+<tr><td>
+optionstruct
+</td><td>
+A struct with the parameters. Any missing field will be filled from the defaults listed below.
+Using incomplete parameter names or incorrect capitalization is allowed, as long as there is a
+unique match.
+<br>NB: with this syntax the filename must be included as a parameter.
+</td></tr>
+<tr><td>
+SQL_statement
+</td><td>
+A char vector containing a valid SQL statement. Please note that the validity of the SQL
+statement is mostly determined by the mex implementation used. There may be differences between
+implementations.
+</td></tr>
+<tr><td>
+input_struct
+</td><td>
+If the SQL statement contains placeholders, the values are filled from this parameter. This input
+argument must be a struct and the number of fields should match the number of placeholders.
+<br>The number of unnamed parameters (<code>'?'</code>) must be equal to the number of fields
+left after matching named (<code>:NAME</code>, <code>@NAME</code>, <code>$NAME</code>) or indexed
+(<code>?NNN</code>) parameters.
+</td></tr>
+</table>
+</p><h2 id="5">Name,Value pairs</h2><p>
+<table border=1>
+<tr><td>
+filename
+</td><td>
+Since the optionstruct replaces the filename, it has to be entered as an optional parameter.
+<br>Not specifying this will result in an error.
+<br><code>default=error;</code>
+</td></tr>
+<tr><td>
+use_CLI
+</td><td>
+Use a system-installed command line interface. This will result in an error if no CLI is
+available. For this version of the function the CLI has been removed, so this will error if you
+set this flag to true. The CLI will probably be back in a future update.
+<br>On prior versions on Windows an exe file was downloaded, while Linux assumed a system
+install. The complete statement was written to a file in the tempdir. There may be additional
+limitations compared to mex implementations.
+<br><code>default=false;</code>
+</td></tr>
+<tr><td>
+print_to_con
+</td><td>
+<i>An attempt is made to also use this parameter for warnings or errors during input parsing.</i>
+<br>A logical that controls whether warnings and other output will be printed to the command
+window. Errors can't be turned off.
+<br><code>default=true;</code> if <code>print_to_fid</code>, <code>print_to_obj</code>, or
+<code>print_to_fcn</code> is specified then <code>default=false;</code>
+</td></tr>
+<tr><td>
+print_to_fid
+</td><td>
+<i>An attempt is made to also use this parameter for warnings or errors during input parsing.</i>
+<br>The file identifier where console output will be printed. Errors and warnings will be printed
+including the call stack. You can provide the fid for the command window (<code>fid=1</code>) to
+print warnings as text. Errors will be printed to the specified file before the error is actually
+thrown.
+<br>If <code>print_to_fid</code>, <code>print_to_obj</code>, and <code>print_to_fcn</code> are
+all empty, this will have the effect of suppressing every output except errors.
+<br>Array inputs are allowed.
+<br><code>default=[];</code>
+</td></tr>
+<tr><td>
+print_to_obj
+</td><td>
+<i>An attempt is made to also use this parameter for warnings or errors during input parsing.</i>
+<br>The handle to an object with a String property, e.g. an edit field in a GUI where console
+output will be printed. Messages with newline characters (ignoring trailing newlines) will be
+returned as a cell array. This includes warnings and errors, which will be printed without the
+call stack. Errors will be written to the object before the error is actually thrown.
+<br>If <code>print_to_fid</code>, <code>print_to_obj</code>, and <code>print_to_fcn</code> are
+all empty, this will have the effect of suppressing every output except errors.
+<br>Array inputs are allowed.
+<br><code>default=[];</code>
+<tr><td>
+print_to_fcn
+</td><td>
+<i>An attempt is made to also use this parameter for warnings or errors during input parsing.</i>
+<br>A <code>struct</code> with a function handle, anonymous function or inline function in the
+<code>'h'</code> field and optionally additional data in the <code>'data'</code> field. The
+function should accept three inputs: a <code>char</code> array (either <code>'warning'</code> or
+<code>'error'</code>), a <code>struct</code> with the message, id, and stack, and the optional
+additional data. The function(s) will be run before the error is actually thrown.
+<br>If <code>print_to_fid</code>, <code>print_to_obj</code>, and <code>print_to_fcn</code> are
+all empty, this will have the effect of suppressing every output except errors.
+<br>Array inputs are allowed.
+<br><code>default=[];</code>
+</td></tr>
+</table>
+</p><h2 id="6">Example</h2><pre class="codeinput"><span class="comment">% Create a database file and create a table.</span>
+db_name=[tempname <span class="string">'.db'</span>];
+sqlite3(db_name,<span class="keyword">...</span>
+    <span class="string">'CREATE TABLE test (some_text TEXT, some_int INT, some_real REAL);'</span>);
+
+<span class="comment">% Insert values from a struct array.</span>
+x=struct;
+x(1).text=<span class="string">'hello world'</span>;x(1).int= 1337;x(1).dbl=exp(1);
+x(2).text=<span class="string">'foo'</span>;        x(2).int=-404; x(2).dbl=pi;
+
+sqlite3(db_name,<span class="keyword">...</span>
+    [<span class="string">'INSERT INTO test (some_text, some_int, some_real) '</span><span class="keyword">...</span>
+    <span class="string">'VALUES (?, ?, ?);'</span>],<span class="keyword">...</span>
+    x)
+
+<span class="comment">% Insert values from a char array.</span>
+sqlite3(db_name,<span class="keyword">...</span>
+    [<span class="string">'INSERT INTO test (some_text, some_int, some_real) '</span>,<span class="keyword">...</span>
+    <span class="string">'VALUES ("lorem ipsum", 42, 4.20);'</span>])
+
+<span class="comment">% Query the data, with or without renaming the fields.</span>
+y = sqlite3(db_name,<span class="keyword">...</span>
+    <span class="string">'SELECT some_text, some_int, some_real as real FROM test;'</span>);
+z = sqlite3(db_name,<span class="keyword">...</span>
+    <span class="string">'SELECT * FROM test;'</span>);
+
+<span class="comment">% Display the retrieved values.</span>
+y(1).some_text
+y(2).some_int
+y(4).real
+disp(z)
+</pre><h2 id="7">Compatibility, version info, and licence</h2><p>
+Compatibility considerations:
+<ul>
+   <li>This is expected to work on most releases. Forward compatibility of Matlab mex files is
+      excellent, but backward compatibility is often an issue. If you use such an
+      OS/realease-combination for which the current binaries don't work, you're welcome to send
+      me a compiled mex file by email, so I can add it to a future update.</li>
+</ul>
+</p><p>
+<table>
+<tr>
+<td> Test suite result </td>
+<td style="border:2px solid black;"> Windows </td>
+<td style="border:2px solid black;"> Linux </td>
+<td style="border:2px solid black;"> MacOS </td>
+</tr>
+<tr>
+<td style="border:2px solid black;"> Matlab R2021b </td>
+<td> <it>W10 : Pass</it> </td>
+<td> <it>ubuntu_20.04 : Pass</it> </td>
+<td> <it>Monterey : Pass</it> </td>
+</tr>
+<tr>
+<td style="border:2px solid black;"> Matlab R2021a </td>
+<td> <it>W10 : Pass</it> </td>
+<td> <it></it> </td>
+<td> <it></it> </td>
+</tr>
+<tr>
+<td style="border:2px solid black;"> Matlab R2020b </td>
+<td> <it>W10 : Pass</it> </td>
+<td> <it>ubuntu_20.04 : Pass</it> </td>
+<td> <it>Monterey : Pass</it> </td>
+</tr>
+<tr>
+<td style="border:2px solid black;"> Matlab R2020a </td>
+<td> <it>W10 : Pass</it> </td>
+<td> <it></it> </td>
+<td> <it></it> </td>
+</tr>
+<tr>
+<td style="border:2px solid black;"> Matlab R2019b </td>
+<td> <it>W10 : Pass</it> </td>
+<td> <it>ubuntu_20.04 : Pass</it> </td>
+<td> <it>Monterey : Pass</it> </td>
+</tr>
+<tr>
+<td style="border:2px solid black;"> Matlab R2019a </td>
+<td> <it>W10 : Pass</it> </td>
+<td> <it></it> </td>
+<td> <it></it> </td>
+</tr>
+<tr>
+<td style="border:2px solid black;"> Matlab R2018a </td>
+<td> <it>W10 : Pass</it> </td>
+<td> <it>ubuntu_20.04 : Pass</it> </td>
+<td> <it></it> </td>
+</tr>
+<tr>
+<td style="border:2px solid black;"> Matlab R2017b </td>
+<td> <it>W10 : Pass</it> </td>
+<td> <it>ubuntu_20.04 : Pass</it> </td>
+<td> <it>Monterey : Pass</it> </td>
+</tr>
+<tr>
+<td style="border:2px solid black;"> Matlab R2016b </td>
+<td> <it>W10 : Pass</it> </td>
+<td> <it>ubuntu_20.04 : Pass</it> </td>
+<td> <it>Monterey : Pass</it> </td>
+</tr>
+<tr>
+<td style="border:2px solid black;"> Matlab R2015a </td>
+<td> <it>W10 : Pass</it> </td>
+<td> <it>ubuntu_20.04 : Pass</it> </td>
+<td> <it></it> </td>
+</tr>
+<tr>
+<td style="border:2px solid black;"> Matlab R2013b </td>
+<td> <it>W10 : Pass</it> </td>
+<td> <it></it> </td>
+<td> <it></it> </td>
+</tr>
+<tr>
+<td style="border:2px solid black;"> Matlab R2012a </td>
+<td> <it></it> </td>
+<td> <it>ubuntu_20.04 : Pass</it> </td>
+<td> <it></it> </td>
+</tr>
+<tr>
+<td style="border:2px solid black;"> Matlab R2011a </td>
+<td> <it>W10 : Pass</it> </td>
+<td> <it>ubuntu_20.04 : Pass</it> </td>
+<td> <it></it> </td>
+</tr>
+<tr>
+<td style="border:2px solid black;"> Matlab R2010b </td>
+<td> <it></it> </td>
+<td> <it>ubuntu_20.04 : Pass</it> </td>
+<td> <it></it> </td>
+</tr>
+<tr>
+<td style="border:2px solid black;"> Matlab R2010a </td>
+<td> <it>W7 : Pass</it> </td>
+<td> <it></it> </td>
+<td> <it></it> </td>
+</tr>
+<tr>
+<td style="border:2px solid black;"> Matlab R2007b </td>
+<td> <it>W10 : Pass</it> </td>
+<td> <it></it> </td>
+<td> <it></it> </td>
+</tr>
+<tr>
+<td style="border:2px solid black;"> Matlab 7.1 (R14SP3) </td>
+<td> <it>XP : Pass</it> </td>
+<td> <it></it> </td>
+<td> <it></it> </td>
+</tr>
+<tr>
+<td style="border:2px solid black;"> Matlab 6.5 (R13) </td>
+<td> <it>W10 : Pass</it> </td>
+<td> <it></it> </td>
+<td> <it></it> </td>
+</tr>
+<tr>
+<td style="border:2px solid black;"> Octave 6.2.0 </td>
+<td> <it>W10 : Pass</it> </td>
+<td> <it></it> </td>
+<td> <it>Catalina : Pass</it> </td>
+</tr>
+<tr>
+<td style="border:2px solid black;"> Octave 5.2.0 </td>
+<td> <it>W10 : Pass</it> </td>
+<td> <it>ubuntu_20.04 : Pass</it> </td>
+<td> <it></it> </td>
+</tr>
+<tr>
+<td style="border:2px solid black;"> Octave 4.4.1 </td>
+<td> <it>W10 : Pass</it> </td>
+<td> <it>raspbian_10 : Pass</it> </td>
+<td> <it>Catalina : Pass</it> </td>
+</tr>
+</table>
+</p><pre>Version: 3.0.0
+Date:    2022-01-22
+Author:  H.J. Wisselink
+Licence: CC by-nc-sa 4.0 ( https://creativecommons.org/licenses/by-nc-sa/4.0 )
+Email = 'h_j_wisselink*alumnus_utwente_nl';
+Real_email = regexprep(Email,{'*','_'},{'@','.'})</pre><h2 id="8">Test suite</h2><p>This tester is included so you can test if your own modifications would introduce any bugs. These tests form the basis for the compatibility table above.</p><p>Note that some of the functions in this tester might be different from the functions included in the actual function. Usually this is done to allow triggering of certain errors.</p><p>Even without comments or blank lines and compressing the functions down as much as possible, the tester function is too large for this page. The full tester function (including all comments) can be found <a href="https://web.archive.org/web/20220122100643/https://cdn-102.anonfiles.com/p0o4N8C1x4/738d9325-1642846577/aaa___sqlite3___test.m">here</a>.</p><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2021b</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% sqlite3
+%
+% <html><tt style="font-size:1%">Formatted documentation for the sqlite3 function.</tt>
+% <div style="margin-top:-5em;color:grey">Matlab and Octave interface to the SQLite engine
+% </div>
+% </html>
+
+%% Description
+%
+% <html>
+% With SQLite you can access an SQL database, without the need of a server. This function is a
+% wrapper for a command line interface and a mex interface. The mex files were compiled for most
+% operating systems for Matlab. For Octave an internal function will download the source files and
+% compile it, since the resulting mex files are less portable than Matlab mex files.
+% Since this is a wrapper for different implementations, it is possible that more complex commands
+% have inconsistent effects depending on whether the mex implementation was used or the CLI.
+% <br>
+% <br>The CLI is removed from this version, but will likely be back in a future update. When it is
+% back, the CLI may have inconsistent effects across different operating systems. The test suite
+% will only test basic functionality for the CLI.
+% <br>
+% <br>Rich text support was tested with &ldquo;&#120507;&#8707;&#967;&#964;&rdquo; (<code>F0 9D 9A
+% BB,E2 88 83,CF 87,CF 84</code> in UTF-8, and <code>D835 DEBB,2203,03C7,03C4</code> in UTF-16).
+% This uses a mathematical upper case tau, the 'there exists' symbol, a lower case chi, and a lower
+% case tau.
+% <br>
+% <br>Backwards compatibility for mex files seems to be difficult for projects of this complexity.
+% Mex files were compiled for the oldest releases I could get working with a compiler (excluding
+% LCC, which seems to suffer from bugs regarding int64). The source code was written to be as
+% strict as possible, so it should be possible for any reasonably up to date compiler to handle the
+% compilation. The code will probably require only minor modifications to compile.
+% <br>
+% <br>The basis for the interface is the SQLite3 project itself. The sqlite3.c and sqlite3.h files
+% can be downloaded from an archived zip file <a
+% href="http://web.archive.org/web/202108id_/https://www.sqlite.org/2021/sqlite-amalgamation-3360000.zip">here</a>.
+% The originals for sqlite3_interface.c, structlist.c, and structlist.h can be found on <a
+% href="https://github.com/rmartinjak/mex-sqlite3">GitHub</a>. These 3 files were edited to make
+% them conform to the stricter standards of older compilers and to remove a message
+% (<code>'mexPrintf("binding params %d of %zu\n", i, mxGetM(params));'</code>).
+% <br>Additionally a converter file was written to deal with UTF-16 char encoding.
+% </html>
+
+%% Syntax
+%
+%   sqlite3(filename,SQL_statement)
+%   sqlite3(optionstruct,SQL_statement)
+%   sqlite3(___,input_struct)
+%   response_struct=sqlite3(___)
+%   [response_struct,cli_output]=sqlite3(___)
+
+%% Output arguments
+%
+% <html>
+% <table border=1>
+% <tr><td>
+% response_struct
+% </td><td>
+% This is an Nx1 struct array, with each field name corresponding to the column name in the
+% selected table. Other commands might result in different types of output. A very limited number
+% of commands and syntax options has been tested.
+% <br>For CLI interactions, an attempt will be made to parse the returned output to a struct and to
+% convert to an appropriate data type. For fields where this fails, the fields will be char arrays.
+% The "PRAGMA table_info('table name')" command is used to parse the data types of output_struct
+% for CLI calls.
+% </td></tr>
+% <tr><td>
+% cli_output
+% </td><td>
+% This is a char vector containing the raw output returned by the system function.
+% <br>This variable defaults to an empty char array if not available.
+% <br>NB: the current version of this function does not support a CLI interaction, so this variable
+% will always be an empty char. It is only here to avoid syntax errors for users updating this
+% function.
+% </td></tr>
+% </table>
+% </html>
+
+%% Input arguments
+%
+% <html>
+% <table border=1>
+% <tr><td>
+% filename
+% </td><td>
+% The file name of the database file to be edited. Using a full or relative path is optional.
+% </td></tr>
+% <tr><td>
+% optionstruct
+% </td><td>
+% A struct with the parameters. Any missing field will be filled from the defaults listed below.
+% Using incomplete parameter names or incorrect capitalization is allowed, as long as there is a
+% unique match.
+% <br>NB: with this syntax the filename must be included as a parameter.
+% </td></tr>
+% <tr><td>
+% SQL_statement
+% </td><td>
+% A char vector containing a valid SQL statement. Please note that the validity of the SQL
+% statement is mostly determined by the mex implementation used. There may be differences between
+% implementations.
+% </td></tr>
+% <tr><td>
+% input_struct
+% </td><td>
+% If the SQL statement contains placeholders, the values are filled from this parameter. This input
+% argument must be a struct and the number of fields should match the number of placeholders.
+% <br>The number of unnamed parameters (<code>'?'</code>) must be equal to the number of fields
+% left after matching named (<code>:NAME</code>, <code>@NAME</code>, <code>$NAME</code>) or indexed
+% (<code>?NNN</code>) parameters.
+% </td></tr>
+% </table>
+% </html>
+
+%% Name,Value pairs
+%
+% <html>
+% <table border=1>
+% <tr><td>
+% filename
+% </td><td>
+% Since the optionstruct replaces the filename, it has to be entered as an optional parameter.
+% <br>Not specifying this will result in an error.
+% <br><code>default=error;</code>
+% </td></tr>
+% <tr><td>
+% use_CLI
+% </td><td>
+% Use a system-installed command line interface. This will result in an error if no CLI is
+% available. For this version of the function the CLI has been removed, so this will error if you
+% set this flag to true. The CLI will probably be back in a future update.
+% <br>On prior versions on Windows an exe file was downloaded, while Linux assumed a system
+% install. The complete statement was written to a file in the tempdir. There may be additional
+% limitations compared to mex implementations.
+% <br><code>default=false;</code>
+% </td></tr>
+% <tr><td>
+% print_to_con
+% </td><td>
+% <i>An attempt is made to also use this parameter for warnings or errors during input parsing.</i>
+% <br>A logical that controls whether warnings and other output will be printed to the command
+% window. Errors can't be turned off.
+% <br><code>default=true;</code> if <code>print_to_fid</code>, <code>print_to_obj</code>, or
+% <code>print_to_fcn</code> is specified then <code>default=false;</code>
+% </td></tr>
+% <tr><td>
+% print_to_fid
+% </td><td>
+% <i>An attempt is made to also use this parameter for warnings or errors during input parsing.</i>
+% <br>The file identifier where console output will be printed. Errors and warnings will be printed
+% including the call stack. You can provide the fid for the command window (<code>fid=1</code>) to
+% print warnings as text. Errors will be printed to the specified file before the error is actually
+% thrown.
+% <br>If <code>print_to_fid</code>, <code>print_to_obj</code>, and <code>print_to_fcn</code> are
+% all empty, this will have the effect of suppressing every output except errors.
+% <br>Array inputs are allowed.
+% <br><code>default=[];</code>
+% </td></tr>
+% <tr><td>
+% print_to_obj
+% </td><td>
+% <i>An attempt is made to also use this parameter for warnings or errors during input parsing.</i>
+% <br>The handle to an object with a String property, e.g. an edit field in a GUI where console
+% output will be printed. Messages with newline characters (ignoring trailing newlines) will be
+% returned as a cell array. This includes warnings and errors, which will be printed without the
+% call stack. Errors will be written to the object before the error is actually thrown.
+% <br>If <code>print_to_fid</code>, <code>print_to_obj</code>, and <code>print_to_fcn</code> are
+% all empty, this will have the effect of suppressing every output except errors.
+% <br>Array inputs are allowed.
+% <br><code>default=[];</code>
+% <tr><td>
+% print_to_fcn
+% </td><td>
+% <i>An attempt is made to also use this parameter for warnings or errors during input parsing.</i>
+% <br>A <code>struct</code> with a function handle, anonymous function or inline function in the
+% <code>'h'</code> field and optionally additional data in the <code>'data'</code> field. The
+% function should accept three inputs: a <code>char</code> array (either <code>'warning'</code> or
+% <code>'error'</code>), a <code>struct</code> with the message, id, and stack, and the optional
+% additional data. The function(s) will be run before the error is actually thrown.
+% <br>If <code>print_to_fid</code>, <code>print_to_obj</code>, and <code>print_to_fcn</code> are
+% all empty, this will have the effect of suppressing every output except errors.
+% <br>Array inputs are allowed.
+% <br><code>default=[];</code>
+% </td></tr>
+% </table>
+% </html>
+
+%% Example
+
+% Create a database file and create a table.
+db_name=[tempname '.db'];
+sqlite3(db_name,...
+    'CREATE TABLE test (some_text TEXT, some_int INT, some_real REAL);');
+
+% Insert values from a struct array.
+x=struct;
+x(1).text='hello world';x(1).int= 1337;x(1).dbl=exp(1);
+x(2).text='foo';        x(2).int=-404; x(2).dbl=pi;
+
+sqlite3(db_name,...
+    ['INSERT INTO test (some_text, some_int, some_real) '...
+    'VALUES (?, ?, ?);'],...
+    x)
+
+% Insert values from a char array.
+sqlite3(db_name,...
+    ['INSERT INTO test (some_text, some_int, some_real) ',...
+    'VALUES ("lorem ipsum", 42, 4.20);'])
+
+% Query the data, with or without renaming the fields.
+y = sqlite3(db_name,...
+    'SELECT some_text, some_int, some_real as real FROM test;');
+z = sqlite3(db_name,...
+    'SELECT * FROM test;');
+
+% Display the retrieved values.
+y(1).some_text
+y(2).some_int
+y(4).real
+disp(z)
+%% Compatibility, version info, and licence
+% <html>
+% Compatibility considerations:
+% <ul>
+%    <li>This is expected to work on most releases. Forward compatibility of Matlab mex files is
+%       excellent, but backward compatibility is often an issue. If you use such an
+%       OS/realease-combination for which the current binaries don't work, you're welcome to send
+%       me a compiled mex file by email, so I can add it to a future update.</li>
+% </ul>
+% </html>
+% 
+% <html>
+% <table>
+% <tr>
+% <td> Test suite result </td>
+% <td style="border:2px solid black;"> Windows </td>
+% <td style="border:2px solid black;"> Linux </td>
+% <td style="border:2px solid black;"> MacOS </td>
+% </tr>
+% <tr>
+% <td style="border:2px solid black;"> Matlab R2021b </td>
+% <td> <it>W10 : Pass</it> </td>
+% <td> <it>ubuntu_20.04 : Pass</it> </td>
+% <td> <it>Monterey : Pass</it> </td>
+% </tr>
+% <tr>
+% <td style="border:2px solid black;"> Matlab R2021a </td>
+% <td> <it>W10 : Pass</it> </td>
+% <td> <it></it> </td>
+% <td> <it></it> </td>
+% </tr>
+% <tr>
+% <td style="border:2px solid black;"> Matlab R2020b </td>
+% <td> <it>W10 : Pass</it> </td>
+% <td> <it>ubuntu_20.04 : Pass</it> </td>
+% <td> <it>Monterey : Pass</it> </td>
+% </tr>
+% <tr>
+% <td style="border:2px solid black;"> Matlab R2020a </td>
+% <td> <it>W10 : Pass</it> </td>
+% <td> <it></it> </td>
+% <td> <it></it> </td>
+% </tr>
+% <tr>
+% <td style="border:2px solid black;"> Matlab R2019b </td>
+% <td> <it>W10 : Pass</it> </td>
+% <td> <it>ubuntu_20.04 : Pass</it> </td>
+% <td> <it>Monterey : Pass</it> </td>
+% </tr>
+% <tr>
+% <td style="border:2px solid black;"> Matlab R2019a </td>
+% <td> <it>W10 : Pass</it> </td>
+% <td> <it></it> </td>
+% <td> <it></it> </td>
+% </tr>
+% <tr>
+% <td style="border:2px solid black;"> Matlab R2018a </td>
+% <td> <it>W10 : Pass</it> </td>
+% <td> <it>ubuntu_20.04 : Pass</it> </td>
+% <td> <it></it> </td>
+% </tr>
+% <tr>
+% <td style="border:2px solid black;"> Matlab R2017b </td>
+% <td> <it>W10 : Pass</it> </td>
+% <td> <it>ubuntu_20.04 : Pass</it> </td>
+% <td> <it>Monterey : Pass</it> </td>
+% </tr>
+% <tr>
+% <td style="border:2px solid black;"> Matlab R2016b </td>
+% <td> <it>W10 : Pass</it> </td>
+% <td> <it>ubuntu_20.04 : Pass</it> </td>
+% <td> <it>Monterey : Pass</it> </td>
+% </tr>
+% <tr>
+% <td style="border:2px solid black;"> Matlab R2015a </td>
+% <td> <it>W10 : Pass</it> </td>
+% <td> <it>ubuntu_20.04 : Pass</it> </td>
+% <td> <it></it> </td>
+% </tr>
+% <tr>
+% <td style="border:2px solid black;"> Matlab R2013b </td>
+% <td> <it>W10 : Pass</it> </td>
+% <td> <it></it> </td>
+% <td> <it></it> </td>
+% </tr>
+% <tr>
+% <td style="border:2px solid black;"> Matlab R2012a </td>
+% <td> <it></it> </td>
+% <td> <it>ubuntu_20.04 : Pass</it> </td>
+% <td> <it></it> </td>
+% </tr>
+% <tr>
+% <td style="border:2px solid black;"> Matlab R2011a </td>
+% <td> <it>W10 : Pass</it> </td>
+% <td> <it>ubuntu_20.04 : Pass</it> </td>
+% <td> <it></it> </td>
+% </tr>
+% <tr>
+% <td style="border:2px solid black;"> Matlab R2010b </td>
+% <td> <it></it> </td>
+% <td> <it>ubuntu_20.04 : Pass</it> </td>
+% <td> <it></it> </td>
+% </tr>
+% <tr>
+% <td style="border:2px solid black;"> Matlab R2010a </td>
+% <td> <it>W7 : Pass</it> </td>
+% <td> <it></it> </td>
+% <td> <it></it> </td>
+% </tr>
+% <tr>
+% <td style="border:2px solid black;"> Matlab R2007b </td>
+% <td> <it>W10 : Pass</it> </td>
+% <td> <it></it> </td>
+% <td> <it></it> </td>
+% </tr>
+% <tr>
+% <td style="border:2px solid black;"> Matlab 7.1 (R14SP3) </td>
+% <td> <it>XP : Pass</it> </td>
+% <td> <it></it> </td>
+% <td> <it></it> </td>
+% </tr>
+% <tr>
+% <td style="border:2px solid black;"> Matlab 6.5 (R13) </td>
+% <td> <it>W10 : Pass</it> </td>
+% <td> <it></it> </td>
+% <td> <it></it> </td>
+% </tr>
+% <tr>
+% <td style="border:2px solid black;"> Octave 6.2.0 </td>
+% <td> <it>W10 : Pass</it> </td>
+% <td> <it></it> </td>
+% <td> <it>Catalina : Pass</it> </td>
+% </tr>
+% <tr>
+% <td style="border:2px solid black;"> Octave 5.2.0 </td>
+% <td> <it>W10 : Pass</it> </td>
+% <td> <it>ubuntu_20.04 : Pass</it> </td>
+% <td> <it></it> </td>
+% </tr>
+% <tr>
+% <td style="border:2px solid black;"> Octave 4.4.1 </td>
+% <td> <it>W10 : Pass</it> </td>
+% <td> <it>raspbian_10 : Pass</it> </td>
+% <td> <it>Catalina : Pass</it> </td>
+% </tr>
+% </table>
+% </html>
+%
+%  Version: 3.0.0
+%  Date:    2022-01-22
+%  Author:  H.J. Wisselink
+%  Licence: CC by-nc-sa 4.0 ( https://creativecommons.org/licenses/by-nc-sa/4.0 )
+%  Email = 'h_j_wisselink*alumnus_utwente_nl';
+%  Real_email = regexprep(Email,{'*','_'},{'@','.'})
+
+%% Test suite
+%
+% This tester is included so you can test if your own modifications would introduce any bugs. These
+% tests form the basis for the compatibility table above.
+% 
+% Note that some of the functions in this tester might be different from the functions included in
+% the actual function. Usually this is done to allow triggering of certain errors.
+% 
+% Even without comments or blank lines and compressing the functions down as much as possible, the tester function is too large for this page. The full tester function (including all comments) can be found <https://web.archive.org/web/20220122100643/https://cdn-102.anonfiles.com/p0o4N8C1x4/738d9325-1642846577/aaa___sqlite3___test.m here>.
+
+##### SOURCE END #####
+--></body></html>
