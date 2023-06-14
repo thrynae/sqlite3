@@ -1,7 +1,7 @@
 /* -------------------------------------------------------------------------- */
 /*                                                                            */
-/* Version: 3.0.0                                                             */
-/* Date:    2022-01-18                                                        */
+/* Version: 3.1.0                                                             */
+/* Date:    2023-06-14                                                        */
 /* Author:  H.J. Wisselink                                                    */
 /* Licence: CC by-nc-sa 4.0 ( creativecommons.org/licenses/by-nc-sa/4.0 )     */
 /* Email = 'h_j_wisselink*alumnus_utwente_nl';                                */
@@ -21,6 +21,10 @@
 /*                                                                            */
 /* This mex file has also been adapted to return the version number if called */
 /* with no inputs and one output.                                             */
+/*                                                                            */
+/* Naming rules for columns in SQLite are much more lenient than fielnames in */
+/* MATLAB. To allow external handling of invalid fieldnames, the actual names */
+/* are returned as a second output argument in a cell vector.                 */
 /*                                                                            */
 /* -------------------------------------------------------------------------- */
 /*                                                                            */
@@ -45,28 +49,31 @@
 mxClassID dummy;
 
 /* Yes, this is terrible, but it works. */
-void TYPECHECK(const mxArray *ARRAY, int nargin, const mxClassID arg0, const mxClassID arg1, const mxClassID arg2, const mxClassID arg3, const mxClassID arg4, const mxClassID arg5) {
+int TYPECHECK(const mxArray *ARRAY, int nargin,
+               const mxClassID arg0, const mxClassID arg1, const mxClassID arg2,
+               const mxClassID arg3, const mxClassID arg4, const mxClassID arg5) {
     int arg,ok=0;
-    mxClassID got = mxGetClassID(ARRAY);
-    mxClassID expect[6];
+    mxClassID type_got = mxGetClassID(ARRAY);
+    mxClassID type_expect[6];
     
-    if (nargin>0) { expect[0]=arg0; }
-    if (nargin>1) { expect[1]=arg1; }
-    if (nargin>2) { expect[2]=arg2; }
-    if (nargin>3) { expect[3]=arg3; }
-    if (nargin>4) { expect[4]=arg4; }
-    if (nargin>5) { expect[5]=arg5; }
+    if (nargin>0) { type_expect[0]=arg0; }
+    if (nargin>1) { type_expect[1]=arg1; }
+    if (nargin>2) { type_expect[2]=arg2; }
+    if (nargin>3) { type_expect[3]=arg3; }
+    if (nargin>4) { type_expect[4]=arg4; }
+    if (nargin>5) { type_expect[5]=arg5; }
     
     for (arg=0;arg<nargin;arg++)
     {
-        if (got == expect[arg]) {
+        if (type_got == type_expect[arg]) {
             ok = 1;
         }
     }
     if (!ok) {
-        mexErrMsgIdAndTxt("sqlite3:typecheck", "BUG: wrong array type");
+        /* Unsupported data type detected. */
+        return SQLITE_MISMATCH;
     }
-    return;
+    return SQLITE_OK;
 }
 
 
@@ -74,7 +81,10 @@ int bind_string(sqlite3_stmt *stmt, int index, const mxArray *array)
 {
     int res;
     char *s;
-    TYPECHECK(array,1, mxCHAR_CLASS ,dummy,dummy,dummy,dummy,dummy);
+    res = TYPECHECK(array,1, mxCHAR_CLASS ,dummy,dummy,dummy,dummy,dummy);
+    if (res != SQLITE_OK) {
+        return res;
+    }
     s = WRAPPERmxArrayToUTF8String(array);
     res = sqlite3_bind_text(stmt, index, s,
             -1,  /* ALL the bytes */
@@ -86,26 +96,34 @@ int bind_string(sqlite3_stmt *stmt, int index, const mxArray *array)
 
 int bind_double(sqlite3_stmt *stmt, int index, const mxArray *array)
 {
+    int res;
     double val;
-    TYPECHECK(array,2, mxSINGLE_CLASS, mxDOUBLE_CLASS ,dummy,dummy,dummy,dummy);
+    res = TYPECHECK(array,2, mxSINGLE_CLASS, mxDOUBLE_CLASS ,dummy,dummy,dummy,dummy);
+    if (res != SQLITE_OK) {
+        return res;
+    }
     val = mxGetScalar(array);
     return sqlite3_bind_double(stmt, index, val);
 }
 
 int bind_int64(sqlite3_stmt *stmt, int index, const mxArray *array)
 {
+    int res;
     mxClassID cls;
     int64_t val = 0;
-    TYPECHECK(array,6,
-            mxINT16_CLASS, mxUINT16_CLASS,
-            mxINT32_CLASS, mxUINT32_CLASS,
-            mxINT64_CLASS, mxUINT64_CLASS);
-    
+    res = TYPECHECK(array,6,
+              mxINT16_CLASS, mxUINT16_CLASS,
+              mxINT32_CLASS, mxUINT32_CLASS,
+              mxINT64_CLASS, mxUINT64_CLASS);
+    if (res != SQLITE_DONE) {
+        return res;
+    }
+
     cls = mxGetClassID(array);
-#define GET_VALUE(CLASS, TYPE) \
+    #define GET_VALUE(CLASS, TYPE) \
     if (cls == CLASS) { \
-            TYPE *p = mxGetData(array); \
-            val = *p; \
+    TYPE *p = mxGetData(array); \
+    val = *p; \
     }
     GET_VALUE(mxINT16_CLASS, int16_t);
     GET_VALUE(mxUINT16_CLASS, uint16_t);
@@ -118,8 +136,11 @@ int bind_int64(sqlite3_stmt *stmt, int index, const mxArray *array)
 
 int bind_params(sqlite3_stmt* stmt, const mxArray *params, int column)
 {
-    int i, n = mxGetNumberOfFields(params);
-    TYPECHECK(params,1, mxSTRUCT_CLASS ,dummy,dummy,dummy,dummy,dummy);
+    int res, i, n = mxGetNumberOfFields(params);
+    res = TYPECHECK(params,1, mxSTRUCT_CLASS ,dummy,dummy,dummy,dummy,dummy);
+    if (res != SQLITE_OK) {
+        return res;
+    }
     for (i = 0; i < n; i++) {
         mxArray *array = mxGetFieldByNumber(params, column, i);
         mxClassID cls = mxGetClassID(array);
@@ -147,15 +168,15 @@ int bind_params(sqlite3_stmt* stmt, const mxArray *params, int column)
     return SQLITE_OK;
 }
 
-int execute_many(sqlite3_stmt *stmt, const mxArray *params)
+int execute_many(sqlite3 *db, sqlite3_stmt *stmt, const mxArray *params)
 {
     int res, i, n = mxGetN(params);
     for (i = 0; i < n; i++) {
-        
-        if (bind_params(stmt, params, i) != SQLITE_OK) {
-            mexErrMsgIdAndTxt("sqlite3:bind",
-                    "failed to bind parameters to statement");
+        res = bind_params(stmt, params, i);
+        if (res != SQLITE_OK) {
+            return res;
         }
+
         res = sqlite3_step(stmt);
         if (res != SQLITE_DONE) {
             return res;
@@ -179,39 +200,95 @@ mxArray *get_column(sqlite3_stmt *stmt, int index)
         int64_t val = sqlite3_column_int64(stmt, index);
         memcpy(mxGetData(a), &val, sizeof val);
         return a;
+    } else if (type == SQLITE_NULL) {
+        /* This return a NULL as a NaN.*/
+        return mxCreateDoubleScalar(mxGetNaN());
+    } else if (type == SQLITE_BLOB) {
+        /* This returns an error later. */
+        return NULL;
     }
-    mexErrMsgIdAndTxt("sqlite3:get_column", "unsupported column type");
+    /* This should never happen. */
     return NULL;
 }
 
 int fetch_row(sqlite3_stmt *stmt, int num_columns, mxArray **array)
 {
+    mxArray *data;
     int i, res = sqlite3_step(stmt);
     if (res == SQLITE_ROW) {
         for (i = 0; i < num_columns; i++) {
-            mxSetFieldByNumber(*array, 0, i, get_column(stmt, i));
+            data = get_column(stmt, i);
+            if (data)
+            {
+                /* Write data to the mxArray. */
+                mxSetFieldByNumber(*array, 0, i, data);
+            }
+            else
+            {
+                /* Throw "Unsupported column type" error. */
+                return SQLITE_FORMAT;
+            }
         }
     }
     return res;
 }
 
-int fetch_results(sqlite3_stmt *stmt, mxArray **results)
+
+/* This function is not used, but could be used in fetch_results() to detect */
+/* invalid field names and generate a MATLAB-compatible field name. */
+int validate_field_name(const char *name)
 {
-    mxArray *row;int i, num_columns, res;
+    /* Check whether the field name is actually allowed in Matlab. */
+    int isValid,i,currentChar;
+    currentChar = name[0];
+    currentChar = (int)currentChar;
+    if (!((currentChar>=48 && currentChar<=57) ||
+          (currentChar>=65 && currentChar<=90) ||
+          (currentChar>=97 && currentChar<=122)
+         )) {
+        return isValid=0;
+    }
+    for (i = 1; i < strlen(name); i++) {
+        currentChar = name[i];
+        currentChar = (int)currentChar;
+        if (!((currentChar>=48 && currentChar<=57) ||
+              (currentChar>=65 && currentChar<=90) ||
+              (currentChar>=97 && currentChar<=122) ||
+              currentChar==95)) {
+            return isValid=0;
+        }
+    }
+    return isValid=1;
+}
+
+int fetch_results(sqlite3_stmt *stmt, mxArray **results, mxArray **columnnames)
+{
+    /* Fetch the data from the data and store the results in the first output */
+    /* argument. The second output argument is used to keep track of the      */
+    /* SQLite column names in case they are invalid.                          */
+    mxArray *row;mxArray *nameAsmxChar;int i, num_columns, res;
     struct structlist result_list;
     structlist_init(&result_list);
     num_columns = sqlite3_column_count(stmt);
+    /* Create a struct element with the correct fields. */
     row = mxCreateStructMatrix(1, 1, 0, NULL);
+    /* Create a cell vector to hold the SQLite column names. */
+    *columnnames = mxCreateCellMatrix(num_columns, 1);
     for (i = 0; i < num_columns; i++) {
         const char *name = sqlite3_column_name(stmt, i);
-        mxAddField(row, name);
+        nameAsmxChar = WRAPPERmxCreateCharMatrixFromStrings(1, &name);
+        mxSetCell(*columnnames, i, nameAsmxChar);
+        sprintf((char *)name,"field_%d",i+1);
+        mxAddField(row, (const char *)name);
     }
     
+    /* Fetch the data and store it in a new row in the struct. */
     while (res = fetch_row(stmt, num_columns, &row),
             res == SQLITE_ROW) {
         structlist_add(&result_list, row);
     }
     *results = structlist_collapse(&result_list);
+    
     return res;
 }
 
@@ -225,7 +302,7 @@ void
     
     enum { RHS_FILENAME, RHS_QUERY, RHS_PARAMS };
     if (nlhs==1 && nrhs==0) {
-        plhs[0]=mxCreateString("3.0.0");
+        plhs[0] = mxCreateString("3.1.0");
         return;
     } else {
         (void) nlhs;
@@ -244,23 +321,27 @@ void
         mexErrMsgIdAndTxt("sqlite3:open", "failed to open db");
     }
     
-    if (sqlite3_prepare_v2(db, query, -1, &stmt, NULL) != SQLITE_OK) {
+    res = sqlite3_prepare_v2(db, query, -1, &stmt, NULL);
+    if (res != SQLITE_OK) {
+        sqlite3_close(db);
         mexErrMsgIdAndTxt(
-                "sqlite3:prepare",
-                "Failed to prepare query. Reasons could be invalid syntax or "
-                "creating a table that already exists.");
+            "sqlite3:prepare",
+            "Failed to prepare query.\n"
+            "Reasons could be invalid syntax or creating a table that already exists.\n"
+            "sqlite3_prepare_v2 returned status code %d",
+            res);
     }
     
     num_columns = sqlite3_column_count(stmt);
     
     if (num_columns > 0) {
         /* Looks like a SELECT query */
-        res = fetch_results(stmt, &plhs[0]);
+        res = fetch_results(stmt, &plhs[0], &plhs[1]);
     } else {
         /* If the user passes a struct array, use this to execute the statement
          * for each column */
         if (nrhs > 2) {
-            res = execute_many(stmt, prhs[RHS_PARAMS]);
+            res = execute_many(db, stmt, prhs[RHS_PARAMS]);
         } else {
             res = sqlite3_step(stmt);
         }
@@ -268,7 +349,15 @@ void
     
     if (res == SQLITE_DONE) {
         /* success! */
-    } else if(res == SQLITE_ERROR)  {
+        sqlite3_finalize(stmt);
+        sqlite3_close(db);
+        return;
+    }
+
+    /* Close the database file before throwing an error. */
+    sqlite3_close(db);
+
+    if(res == SQLITE_ERROR)  {
         mexErrMsgIdAndTxt("sqlite3:SQLITE_ERROR",
                 "SQLite responded with error code %d:\n%s",
                  res,"Generic error");
@@ -363,7 +452,7 @@ void
     } else if(res == SQLITE_FORMAT)  {
         mexErrMsgIdAndTxt("sqlite3:SQLITE_FORMAT",
                 "SQLite responded with error code %d:\n%s",
-                 res,"Not used");
+                 res,"Unsupported column type");
     } else if(res == SQLITE_RANGE)  {
         mexErrMsgIdAndTxt("sqlite3:SQLITE_RANGE",
                 "SQLite responded with error code %d:\n%s",
@@ -388,7 +477,5 @@ void
         mexErrMsgIdAndTxt("sqlite3:UnknownError",
                 "SQLite responded with error code %d",res);
     }
-    sqlite3_finalize(stmt);
-    sqlite3_close(db);
 }
 

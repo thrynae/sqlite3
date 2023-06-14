@@ -1,0 +1,8 @@
+*.html linguist-detectable=false
+*.c linguist-detectable=false
+*.h linguist-detectable=false
+*.dll linguist-detectable=false
+*.mexw32 linguist-detectable=false
+*.mexw64 linguist-detectable=false
+*.mexa64 linguist-detectable=false
+*.mexmaci64 linguist-detectable=false

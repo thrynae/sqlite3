@@ -1,7 +1,7 @@
 /* -------------------------------------------------------------------------- */
 /*                                                                            */
-/* Version: 3.0.0                                                             */
-/* Date:    2022-01-18                                                        */
+/* Version: 3.1.0                                                             */
+/* Date:    2023-06-14                                                        */
 /* Author:  H.J. Wisselink                                                    */
 /* Licence: CC by-nc-sa 4.0 ( creativecommons.org/licenses/by-nc-sa/4.0 )     */
 /* Email = 'h_j_wisselink*alumnus_utwente_nl';                                */

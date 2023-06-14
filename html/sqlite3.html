@@ -6,7 +6,7 @@
    <!--
 This HTML was auto-generated from MATLAB code.
 To make changes, update the MATLAB code and republish this document.
-      --><title>sqlite3</title><meta name="generator" content="MATLAB 9.11"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2022-01-22"><meta name="DC.source" content="sqlite3.m"><style type="text/css">
+      --><title>sqlite3</title><meta name="generator" content="MATLAB 9.14"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2023-06-14"><meta name="DC.source" content="sqlite3.m"><style type="text/css">
 html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
 
 html { min-height:100%; margin-bottom:1px; }
@@ -99,8 +99,10 @@ href="http://web.archive.org/web/202108id_/https://www.sqlite.org/2021/sqlite-am
 The originals for sqlite3_interface.c, structlist.c, and structlist.h can be found on <a
 href="https://github.com/rmartinjak/mex-sqlite3">GitHub</a>. These 3 files were edited to make
 them conform to the stricter standards of older compilers and to remove a message
-(<code>'mexPrintf("binding params %d of %zu\n", i, mxGetM(params));'</code>).
-<br>Additionally a converter file was written to deal with UTF-16 char encoding.
+(<code>'mexPrintf("binding params %d of %zu\n", i, mxGetM(params));'</code>). The files were
+further edited to deal with column names that are not valid Matlab field names and to make sure
+the database file is closed whenever an error occurs.
+<br>Additionally, a converter file was written to deal with UTF-16 char encoding.
 </p><h2 id="2">Syntax</h2><pre class="language-matlab">sqlite3(filename,SQL_statement)
 sqlite3(optionstruct,SQL_statement)
 sqlite3(___,input_struct)
@@ -187,8 +189,10 @@ print_to_con
 <i>An attempt is made to also use this parameter for warnings or errors during input parsing.</i>
 <br>A logical that controls whether warnings and other output will be printed to the command
 window. Errors can't be turned off.
-<br><code>default=true;</code> if <code>print_to_fid</code>, <code>print_to_obj</code>, or
-<code>print_to_fcn</code> is specified then <code>default=false;</code>
+<br><code>default=true;</code>
+<br>Specifying <code>print_to_fid</code>, <code>print_to_obj</code>, or <code>print_to_fcn</code>
+will change the default to <code>false</code>, unless parsing of any of the other exception
+redirection options results in an error.
 </td></tr>
 <tr><td>
 print_to_fid
@@ -259,13 +263,13 @@ z = sqlite3(db_name,<span class="keyword">...</span>
 <span class="comment">% Display the retrieved values.</span>
 y(1).some_text
 y(2).some_int
-y(4).real
+y(3).real
 disp(z)
 </pre><h2 id="7">Compatibility, version info, and licence</h2><p>
 Compatibility considerations:
 <ul>
    <li>This is expected to work on most releases. Forward compatibility of Matlab mex files is
-      excellent, but backward compatibility is often an issue. If you use such an
+      (generally) excellent, but backward compatibility is often an issue. If you use an
       OS/realease-combination for which the current binaries don't work, you're welcome to send
       me a compiled mex file by email, so I can add it to a future update.</li>
 </ul>
@@ -278,9 +282,33 @@ Compatibility considerations:
 <td style="border:2px solid black;"> MacOS </td>
 </tr>
 <tr>
+<td style="border:2px solid black;"> Matlab R2023b </td>
+<td> <it></it> </td>
+<td> <it></it> </td>
+<td> <it>Monterey : Pass</it> </td>
+</tr>
+<tr>
+<td style="border:2px solid black;"> Matlab R2023a </td>
+<td> <it>W10 : Pass</it> </td>
+<td> <it>ubuntu_22.04 : Pass</it> </td>
+<td> <it></it> </td>
+</tr>
+<tr>
+<td style="border:2px solid black;"> Matlab R2022b </td>
+<td> <it>W10 : Pass</it> </td>
+<td> <it>ubuntu_22.04 : Pass</it> </td>
+<td> <it>Monterey : Pass</it> </td>
+</tr>
+<tr>
+<td style="border:2px solid black;"> Matlab R2022a </td>
+<td> <it>W10 : Pass</it> </td>
+<td> <it></it> </td>
+<td> <it></it> </td>
+</tr>
+<tr>
 <td style="border:2px solid black;"> Matlab R2021b </td>
 <td> <it>W10 : Pass</it> </td>
-<td> <it>ubuntu_20.04 : Pass</it> </td>
+<td> <it>ubuntu_22.04 : Pass</it> </td>
 <td> <it>Monterey : Pass</it> </td>
 </tr>
 <tr>
@@ -292,7 +320,7 @@ Compatibility considerations:
 <tr>
 <td style="border:2px solid black;"> Matlab R2020b </td>
 <td> <it>W10 : Pass</it> </td>
-<td> <it>ubuntu_20.04 : Pass</it> </td>
+<td> <it>ubuntu_22.04 : Pass</it> </td>
 <td> <it>Monterey : Pass</it> </td>
 </tr>
 <tr>
@@ -304,7 +332,7 @@ Compatibility considerations:
 <tr>
 <td style="border:2px solid black;"> Matlab R2019b </td>
 <td> <it>W10 : Pass</it> </td>
-<td> <it>ubuntu_20.04 : Pass</it> </td>
+<td> <it>ubuntu_22.04 : Pass</it> </td>
 <td> <it>Monterey : Pass</it> </td>
 </tr>
 <tr>
@@ -316,25 +344,25 @@ Compatibility considerations:
 <tr>
 <td style="border:2px solid black;"> Matlab R2018a </td>
 <td> <it>W10 : Pass</it> </td>
-<td> <it>ubuntu_20.04 : Pass</it> </td>
+<td> <it>ubuntu_22.04 : Pass</it> </td>
 <td> <it></it> </td>
 </tr>
 <tr>
 <td style="border:2px solid black;"> Matlab R2017b </td>
 <td> <it>W10 : Pass</it> </td>
-<td> <it>ubuntu_20.04 : Pass</it> </td>
+<td> <it>ubuntu_22.04 : Pass</it> </td>
 <td> <it>Monterey : Pass</it> </td>
 </tr>
 <tr>
 <td style="border:2px solid black;"> Matlab R2016b </td>
 <td> <it>W10 : Pass</it> </td>
-<td> <it>ubuntu_20.04 : Pass</it> </td>
+<td> <it>ubuntu_22.04 : Pass</it> </td>
 <td> <it>Monterey : Pass</it> </td>
 </tr>
 <tr>
 <td style="border:2px solid black;"> Matlab R2015a </td>
 <td> <it>W10 : Pass</it> </td>
-<td> <it>ubuntu_20.04 : Pass</it> </td>
+<td> <it>ubuntu_22.04 : Pass</it> </td>
 <td> <it></it> </td>
 </tr>
 <tr>
@@ -346,25 +374,7 @@ Compatibility considerations:
 <tr>
 <td style="border:2px solid black;"> Matlab R2012a </td>
 <td> <it></it> </td>
-<td> <it>ubuntu_20.04 : Pass</it> </td>
-<td> <it></it> </td>
-</tr>
-<tr>
-<td style="border:2px solid black;"> Matlab R2011a </td>
-<td> <it>W10 : Pass</it> </td>
-<td> <it>ubuntu_20.04 : Pass</it> </td>
-<td> <it></it> </td>
-</tr>
-<tr>
-<td style="border:2px solid black;"> Matlab R2010b </td>
-<td> <it></it> </td>
-<td> <it>ubuntu_20.04 : Pass</it> </td>
-<td> <it></it> </td>
-</tr>
-<tr>
-<td style="border:2px solid black;"> Matlab R2010a </td>
-<td> <it>W7 : Pass</it> </td>
-<td> <it></it> </td>
+<td> <it>ubuntu_22.04 : Pass</it> </td>
 <td> <it></it> </td>
 </tr>
 <tr>
@@ -386,30 +396,42 @@ Compatibility considerations:
 <td> <it></it> </td>
 </tr>
 <tr>
-<td style="border:2px solid black;"> Octave 6.2.0 </td>
+<td style="border:2px solid black;"> Octave 8.2.0 </td>
 <td> <it>W10 : Pass</it> </td>
 <td> <it></it> </td>
+<td> <it></it> </td>
+</tr>
+<tr>
+<td style="border:2px solid black;"> Octave 7.2.0 </td>
+<td> <it>W10 : Pass</it> </td>
+<td> <it></it> </td>
+<td> <it></it> </td>
+</tr>
+<tr>
+<td style="border:2px solid black;"> Octave 6.2.0 </td>
+<td> <it>W10 : Pass</it> </td>
+<td> <it>raspbian_11 : Pass</it> </td>
 <td> <it>Catalina : Pass</it> </td>
 </tr>
 <tr>
 <td style="border:2px solid black;"> Octave 5.2.0 </td>
 <td> <it>W10 : Pass</it> </td>
-<td> <it>ubuntu_20.04 : Pass</it> </td>
+<td> <it></it> </td>
 <td> <it></it> </td>
 </tr>
 <tr>
 <td style="border:2px solid black;"> Octave 4.4.1 </td>
 <td> <it>W10 : Pass</it> </td>
-<td> <it>raspbian_10 : Pass</it> </td>
+<td> <it></it> </td>
 <td> <it>Catalina : Pass</it> </td>
 </tr>
 </table>
-</p><pre>Version: 3.0.0
-Date:    2022-01-22
+</p><pre>Version: 3.1.0
+Date:    2023-06-14
 Author:  H.J. Wisselink
 Licence: CC by-nc-sa 4.0 ( https://creativecommons.org/licenses/by-nc-sa/4.0 )
 Email = 'h_j_wisselink*alumnus_utwente_nl';
-Real_email = regexprep(Email,{'*','_'},{'@','.'})</pre><h2 id="8">Test suite</h2><p>This tester is included so you can test if your own modifications would introduce any bugs. These tests form the basis for the compatibility table above.</p><p>Note that some of the functions in this tester might be different from the functions included in the actual function. Usually this is done to allow triggering of certain errors.</p><p>Even without comments or blank lines and compressing the functions down as much as possible, the tester function is too large for this page. The full tester function (including all comments) can be found <a href="https://web.archive.org/web/20220122100643/https://cdn-102.anonfiles.com/p0o4N8C1x4/738d9325-1642846577/aaa___sqlite3___test.m">here</a>.</p><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2021b</a><br></p></div><!--
+Real_email = regexprep(Email,{'*','_'},{'@','.'})</pre><h2 id="8">Test suite</h2><p>This tester is included so you can test if your own modifications would introduce any bugs. These tests form the basis for the compatibility table above. Note that functions may be different between the tester version and the normal function. Make sure to apply any modifications to both. The full tester function (including all comments) can be found <a href="https://web.archive.org/web/20230614150416/https://cdn-141.anonfiles.com/21k5Hcwez3/ba47b74a-1686755649/aaa___sqlite3___test.m">here</a>.</p><p class="footer"><br><a href="https://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2023a</a><br></p></div><!--
 ##### SOURCE BEGIN #####
 %% sqlite3
 %
@@ -449,8 +471,10 @@ Real_email = regexprep(Email,{'*','_'},{'@','.'})</pre><h2 id="8">Test suite</h2
 % The originals for sqlite3_interface.c, structlist.c, and structlist.h can be found on <a
 % href="https://github.com/rmartinjak/mex-sqlite3">GitHub</a>. These 3 files were edited to make
 % them conform to the stricter standards of older compilers and to remove a message
-% (<code>'mexPrintf("binding params %d of %zu\n", i, mxGetM(params));'</code>).
-% <br>Additionally a converter file was written to deal with UTF-16 char encoding.
+% (<code>'mexPrintf("binding params %d of %zu\n", i, mxGetM(params));'</code>). The files were
+% further edited to deal with column names that are not valid Matlab field names and to make sure
+% the database file is closed whenever an error occurs.
+% <br>Additionally, a converter file was written to deal with UTF-16 char encoding.
 % </html>
 
 %% Syntax
@@ -552,8 +576,10 @@ Real_email = regexprep(Email,{'*','_'},{'@','.'})</pre><h2 id="8">Test suite</h2
 % <i>An attempt is made to also use this parameter for warnings or errors during input parsing.</i>
 % <br>A logical that controls whether warnings and other output will be printed to the command
 % window. Errors can't be turned off.
-% <br><code>default=true;</code> if <code>print_to_fid</code>, <code>print_to_obj</code>, or
-% <code>print_to_fcn</code> is specified then <code>default=false;</code>
+% <br><code>default=true;</code>
+% <br>Specifying <code>print_to_fid</code>, <code>print_to_obj</code>, or <code>print_to_fcn</code>
+% will change the default to <code>false</code>, unless parsing of any of the other exception
+% redirection options results in an error.
 % </td></tr>
 % <tr><td>
 % print_to_fid
@@ -628,14 +654,14 @@ z = sqlite3(db_name,...
 % Display the retrieved values.
 y(1).some_text
 y(2).some_int
-y(4).real
+y(3).real
 disp(z)
 %% Compatibility, version info, and licence
 % <html>
 % Compatibility considerations:
 % <ul>
 %    <li>This is expected to work on most releases. Forward compatibility of Matlab mex files is
-%       excellent, but backward compatibility is often an issue. If you use such an
+%       (generally) excellent, but backward compatibility is often an issue. If you use an
 %       OS/realease-combination for which the current binaries don't work, you're welcome to send
 %       me a compiled mex file by email, so I can add it to a future update.</li>
 % </ul>
@@ -650,9 +676,33 @@ disp(z)
 % <td style="border:2px solid black;"> MacOS </td>
 % </tr>
 % <tr>
+% <td style="border:2px solid black;"> Matlab R2023b </td>
+% <td> <it></it> </td>
+% <td> <it></it> </td>
+% <td> <it>Monterey : Pass</it> </td>
+% </tr>
+% <tr>
+% <td style="border:2px solid black;"> Matlab R2023a </td>
+% <td> <it>W10 : Pass</it> </td>
+% <td> <it>ubuntu_22.04 : Pass</it> </td>
+% <td> <it></it> </td>
+% </tr>
+% <tr>
+% <td style="border:2px solid black;"> Matlab R2022b </td>
+% <td> <it>W10 : Pass</it> </td>
+% <td> <it>ubuntu_22.04 : Pass</it> </td>
+% <td> <it>Monterey : Pass</it> </td>
+% </tr>
+% <tr>
+% <td style="border:2px solid black;"> Matlab R2022a </td>
+% <td> <it>W10 : Pass</it> </td>
+% <td> <it></it> </td>
+% <td> <it></it> </td>
+% </tr>
+% <tr>
 % <td style="border:2px solid black;"> Matlab R2021b </td>
 % <td> <it>W10 : Pass</it> </td>
-% <td> <it>ubuntu_20.04 : Pass</it> </td>
+% <td> <it>ubuntu_22.04 : Pass</it> </td>
 % <td> <it>Monterey : Pass</it> </td>
 % </tr>
 % <tr>
@@ -664,7 +714,7 @@ disp(z)
 % <tr>
 % <td style="border:2px solid black;"> Matlab R2020b </td>
 % <td> <it>W10 : Pass</it> </td>
-% <td> <it>ubuntu_20.04 : Pass</it> </td>
+% <td> <it>ubuntu_22.04 : Pass</it> </td>
 % <td> <it>Monterey : Pass</it> </td>
 % </tr>
 % <tr>
@@ -676,7 +726,7 @@ disp(z)
 % <tr>
 % <td style="border:2px solid black;"> Matlab R2019b </td>
 % <td> <it>W10 : Pass</it> </td>
-% <td> <it>ubuntu_20.04 : Pass</it> </td>
+% <td> <it>ubuntu_22.04 : Pass</it> </td>
 % <td> <it>Monterey : Pass</it> </td>
 % </tr>
 % <tr>
@@ -688,25 +738,25 @@ disp(z)
 % <tr>
 % <td style="border:2px solid black;"> Matlab R2018a </td>
 % <td> <it>W10 : Pass</it> </td>
-% <td> <it>ubuntu_20.04 : Pass</it> </td>
+% <td> <it>ubuntu_22.04 : Pass</it> </td>
 % <td> <it></it> </td>
 % </tr>
 % <tr>
 % <td style="border:2px solid black;"> Matlab R2017b </td>
 % <td> <it>W10 : Pass</it> </td>
-% <td> <it>ubuntu_20.04 : Pass</it> </td>
+% <td> <it>ubuntu_22.04 : Pass</it> </td>
 % <td> <it>Monterey : Pass</it> </td>
 % </tr>
 % <tr>
 % <td style="border:2px solid black;"> Matlab R2016b </td>
 % <td> <it>W10 : Pass</it> </td>
-% <td> <it>ubuntu_20.04 : Pass</it> </td>
+% <td> <it>ubuntu_22.04 : Pass</it> </td>
 % <td> <it>Monterey : Pass</it> </td>
 % </tr>
 % <tr>
 % <td style="border:2px solid black;"> Matlab R2015a </td>
 % <td> <it>W10 : Pass</it> </td>
-% <td> <it>ubuntu_20.04 : Pass</it> </td>
+% <td> <it>ubuntu_22.04 : Pass</it> </td>
 % <td> <it></it> </td>
 % </tr>
 % <tr>
@@ -718,25 +768,7 @@ disp(z)
 % <tr>
 % <td style="border:2px solid black;"> Matlab R2012a </td>
 % <td> <it></it> </td>
-% <td> <it>ubuntu_20.04 : Pass</it> </td>
-% <td> <it></it> </td>
-% </tr>
-% <tr>
-% <td style="border:2px solid black;"> Matlab R2011a </td>
-% <td> <it>W10 : Pass</it> </td>
-% <td> <it>ubuntu_20.04 : Pass</it> </td>
-% <td> <it></it> </td>
-% </tr>
-% <tr>
-% <td style="border:2px solid black;"> Matlab R2010b </td>
-% <td> <it></it> </td>
-% <td> <it>ubuntu_20.04 : Pass</it> </td>
-% <td> <it></it> </td>
-% </tr>
-% <tr>
-% <td style="border:2px solid black;"> Matlab R2010a </td>
-% <td> <it>W7 : Pass</it> </td>
-% <td> <it></it> </td>
+% <td> <it>ubuntu_22.04 : Pass</it> </td>
 % <td> <it></it> </td>
 % </tr>
 % <tr>
@@ -758,28 +790,40 @@ disp(z)
 % <td> <it></it> </td>
 % </tr>
 % <tr>
-% <td style="border:2px solid black;"> Octave 6.2.0 </td>
+% <td style="border:2px solid black;"> Octave 8.2.0 </td>
 % <td> <it>W10 : Pass</it> </td>
 % <td> <it></it> </td>
+% <td> <it></it> </td>
+% </tr>
+% <tr>
+% <td style="border:2px solid black;"> Octave 7.2.0 </td>
+% <td> <it>W10 : Pass</it> </td>
+% <td> <it></it> </td>
+% <td> <it></it> </td>
+% </tr>
+% <tr>
+% <td style="border:2px solid black;"> Octave 6.2.0 </td>
+% <td> <it>W10 : Pass</it> </td>
+% <td> <it>raspbian_11 : Pass</it> </td>
 % <td> <it>Catalina : Pass</it> </td>
 % </tr>
 % <tr>
 % <td style="border:2px solid black;"> Octave 5.2.0 </td>
 % <td> <it>W10 : Pass</it> </td>
-% <td> <it>ubuntu_20.04 : Pass</it> </td>
+% <td> <it></it> </td>
 % <td> <it></it> </td>
 % </tr>
 % <tr>
 % <td style="border:2px solid black;"> Octave 4.4.1 </td>
 % <td> <it>W10 : Pass</it> </td>
-% <td> <it>raspbian_10 : Pass</it> </td>
+% <td> <it></it> </td>
 % <td> <it>Catalina : Pass</it> </td>
 % </tr>
 % </table>
 % </html>
 %
-%  Version: 3.0.0
-%  Date:    2022-01-22
+%  Version: 3.1.0
+%  Date:    2023-06-14
 %  Author:  H.J. Wisselink
 %  Licence: CC by-nc-sa 4.0 ( https://creativecommons.org/licenses/by-nc-sa/4.0 )
 %  Email = 'h_j_wisselink*alumnus_utwente_nl';
@@ -787,13 +831,11 @@ disp(z)
 
 %% Test suite
 %
-% This tester is included so you can test if your own modifications would introduce any bugs. These
-% tests form the basis for the compatibility table above.
-% 
-% Note that some of the functions in this tester might be different from the functions included in
-% the actual function. Usually this is done to allow triggering of certain errors.
-% 
-% Even without comments or blank lines and compressing the functions down as much as possible, the tester function is too large for this page. The full tester function (including all comments) can be found <https://web.archive.org/web/20220122100643/https://cdn-102.anonfiles.com/p0o4N8C1x4/738d9325-1642846577/aaa___sqlite3___test.m here>.
+% This tester is included so you can test if your own modifications would introduce
+% any bugs. These tests form the basis for the compatibility table above. Note that
+% functions may be different between the tester version and the normal function. Make
+% sure to apply any modifications to both. The full tester function (including all
+% comments) can be found <https://web.archive.org/web/20230614150416/https://cdn-141.anonfiles.com/21k5Hcwez3/ba47b74a-1686755649/aaa___sqlite3___test.m here>.
 
 ##### SOURCE END #####
 --></body></html>
